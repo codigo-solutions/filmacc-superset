@@ -198,7 +198,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
     const rowLimit = Number(formData.row_limit || -1);
     const sqlRowCount = Number(firstQueryResponse?.sql_rowcount || 0);
 
-    const canExplore = !editMode && supersetCanExplore;
+    const canExplore = !editMode && supersetCanExplore && !isEmbedded();
 
     useEffect(() => {
       const headerElement = headerRef.current;
