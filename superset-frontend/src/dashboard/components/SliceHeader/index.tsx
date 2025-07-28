@@ -35,6 +35,8 @@ import {
 } from '@superset-ui/core';
 import { useUiConfig } from 'src/components/UiConfigContext';
 import { isEmbedded } from 'src/dashboard/util/isEmbedded';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 import { Tooltip, EditableTitle, Icons } from '@superset-ui/core/components';
 import { useSelector } from 'react-redux';
 import SliceHeaderControls from 'src/dashboard/components/SliceHeaderControls';
@@ -176,8 +178,35 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
       'dashboard.slice.header',
     );
     const uiConfig = useUiConfig();
+
+    // More comprehensive embedded detection
+    const isIframe = isEmbedded();
+    const isStandalone = getUrlParam(URL_PARAMS.standalone);
+    const isEmbeddedPath = window.location.pathname.includes('/embedded/');
+    const embeddedStatus =
+      isIframe ||
+      !!isStandalone ||
+      isEmbeddedPath ||
+      uiConfig.hideChartControls;
+
+    // Temporary debug logging (remove after testing)
+    if (slice.slice_id) {
+      // eslint-disable-next-line no-console
+      console.log(`SliceHeader ${slice.slice_id}:`, {
+        isIframe,
+        isStandalone,
+        isEmbeddedPath,
+        hideChartControls: uiConfig.hideChartControls,
+        embeddedStatus,
+        windowSelf: window.self,
+        windowTop: window.top,
+        href: window.location.href,
+        pathname: window.location.pathname,
+      });
+    }
+
     const shouldShowRowLimitWarning =
-      !isEmbedded() || uiConfig.showRowLimitWarning;
+      !embeddedStatus || uiConfig.showRowLimitWarning;
     const dashboardPageId = useContext(DashboardPageIdContext);
     const [headerTooltip, setHeaderTooltip] = useState<ReactNode | null>(null);
     const headerRef = useRef<HTMLDivElement>(null);
@@ -198,7 +227,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
     const rowLimit = Number(formData.row_limit || -1);
     const sqlRowCount = Number(firstQueryResponse?.sql_rowcount || 0);
 
-    const canExplore = !editMode && supersetCanExplore && !isEmbedded();
+    const canExplore = !editMode && supersetCanExplore && !embeddedStatus;
 
     useEffect(() => {
       const headerElement = headerRef.current;
@@ -244,11 +273,11 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                   ? '---' // this makes an empty title clickable
                   : '')
               }
-              canEdit={editMode && !isEmbedded()}
+              canEdit={editMode && !embeddedStatus}
               onSaveTitle={updateSliceName}
               showTooltip={false}
               renderLink={
-                canExplore && exploreUrl && !isEmbedded()
+                canExplore && exploreUrl && !embeddedStatus
                   ? renderExploreLink
                   : undefined
               }
@@ -299,7 +328,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                 </Tooltip>
               )}
 
-              {!uiConfig.hideChartControls && !isEmbedded() && (
+              {!uiConfig.hideChartControls && !embeddedStatus && (
                 <FiltersBadge chartId={slice.slice_id} />
               )}
 
@@ -318,7 +347,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                   }
                 />
               )}
-              {!uiConfig.hideChartControls && !isEmbedded() && (
+              {!uiConfig.hideChartControls && !embeddedStatus && (
                 <SliceHeaderControls
                   slice={slice}
                   isCached={isCached}
