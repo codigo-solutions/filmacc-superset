@@ -244,11 +244,13 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                   ? '---' // this makes an empty title clickable
                   : '')
               }
-              canEdit={editMode}
+              canEdit={editMode && !isEmbedded()}
               onSaveTitle={updateSliceName}
               showTooltip={false}
               renderLink={
-                canExplore && exploreUrl ? renderExploreLink : undefined
+                canExplore && exploreUrl && !isEmbedded()
+                  ? renderExploreLink
+                  : undefined
               }
             />
           </Tooltip>

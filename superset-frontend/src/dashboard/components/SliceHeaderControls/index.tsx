@@ -51,7 +51,6 @@ import {
 import ShareMenuItems from 'src/dashboard/components/menu/ShareMenuItems';
 import downloadAsImage from 'src/utils/downloadAsImage';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
-import { isEmbedded } from 'src/dashboard/util/isEmbedded';
 import { Icons } from '@superset-ui/core/components/Icons';
 import ViewQueryModal from 'src/explore/components/controls/ViewQueryModal';
 import { ResultsPaneOnDashboard } from 'src/explore/components/DataTablesPane';
@@ -175,11 +174,9 @@ const SliceHeaderControls = (
     ) &&
     getChartMetadataRegistry()
       .get(props.slice.viz_type)
-      ?.behaviors?.includes(Behavior.InteractiveChart) &&
-    !isEmbedded();
-  const canExplore = props.supersetCanExplore && !isEmbedded();
+      ?.behaviors?.includes(Behavior.InteractiveChart);
+  const canExplore = props.supersetCanExplore;
   const { canDrillToDetail, canViewQuery, canViewTable } = usePermissions();
-  const canViewQueryEmbedded = canViewQuery && !isEmbedded();
   const refreshChart = () => {
     if (props.updatedDttm) {
       props.forceRefresh(props.slice.slice_id, props.dashboardId);
@@ -387,7 +384,7 @@ const SliceHeaderControls = (
 
       {(canExplore || canEditCrossFilters) && <Menu.Divider />}
 
-      {(canExplore || canViewQueryEmbedded) && (
+      {(canExplore || canViewQuery) && (
         <Menu.Item key={MenuKeys.ViewQuery}>
           <ModalTrigger
             triggerNode={
@@ -403,7 +400,7 @@ const SliceHeaderControls = (
         </Menu.Item>
       )}
 
-      {(canExplore || (canViewTable && !isEmbedded())) && (
+      {(canExplore || canViewTable) && (
         <Menu.Item key={MenuKeys.ViewResults}>
           <ViewResultsModalTrigger
             canExplore={props.supersetCanExplore}
