@@ -532,30 +532,28 @@ const SliceHeaderControls = (
           }}
         />
       )}
-      {!isEmbedded && (
-        <NoAnimationDropdown
-          dropdownRender={() => menu}
-          overlayStyle={dropdownOverlayStyle}
-          trigger={['click']}
-          placement="bottomRight"
-          autoFocus
-          forceRender
+      <NoAnimationDropdown
+        dropdownRender={() => menu}
+        overlayStyle={dropdownOverlayStyle}
+        trigger={['click']}
+        placement="bottomRight"
+        autoFocus
+        forceRender
+      >
+        <span
+          css={() => css`
+            display: flex;
+            align-items: center;
+          `}
+          id={`slice_${slice.slice_id}-controls`}
+          role="button"
+          aria-label="More Options"
+          aria-haspopup="true"
+          tabIndex={0}
         >
-          <span
-            css={() => css`
-              display: flex;
-              align-items: center;
-            `}
-            id={`slice_${slice.slice_id}-controls`}
-            role="button"
-            aria-label="More Options"
-            aria-haspopup="true"
-            tabIndex={0}
-          >
-            <VerticalDotsTrigger />
-          </span>
-        </NoAnimationDropdown>
-      )}
+          <VerticalDotsTrigger />
+        </span>
+      </NoAnimationDropdown>
       <DrillDetailModal
         formData={props.formData}
         initialFilters={[]}
