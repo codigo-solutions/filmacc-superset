@@ -25,7 +25,7 @@ import {
   RefObject,
 } from 'react';
 
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory, useLocation } from 'react-router-dom';
 import { extendedDayjs } from 'src/utils/dates';
 import {
   Behavior,
@@ -92,6 +92,9 @@ const RefreshTooltip = styled.div`
 
 const getScreenshotNodeSelector = (chartId: string | number) =>
   `.dashboard-chart-id-${chartId}`;
+
+const isEmbeddedMode = (pathname: string) => 
+  pathname.includes('/embedded/') || pathname.includes('/dashboard/') && pathname.includes('/embedded');
 
 const VerticalDotsTrigger = () => (
   <VerticalDotsContainer>
@@ -165,6 +168,8 @@ const SliceHeaderControls = (
     props.slice.slice_id,
   );
   const history = useHistory();
+  const location = useLocation();
+  const isEmbedded = isEmbeddedMode(location.pathname);
 
   const queryMenuRef: RefObject<any> = useRef(null);
   const resultsMenuRef: RefObject<any> = useRef(null);
@@ -377,7 +382,7 @@ const SliceHeaderControls = (
         </Menu.Item>
       )}
 
-      {canExplore && (
+      {canExplore && !isEmbedded && (
         <Menu.Item
           key={MenuKeys.ExploreChart}
           data-test-edit-chart-name={slice.slice_name}
@@ -394,9 +399,9 @@ const SliceHeaderControls = (
         </Menu.Item>
       )}
 
-      {(canExplore || canEditCrossFilters) && <Menu.Divider />}
+      {((canExplore && !isEmbedded) || canEditCrossFilters) && <Menu.Divider />}
 
-      {(canExplore || canViewQuery) && (
+      {(canExplore || canViewQuery) && !isEmbedded && (
         <Menu.Item key={MenuKeys.ViewQuery}>
           <ModalTrigger
             triggerNode={
@@ -446,9 +451,9 @@ const SliceHeaderControls = (
         />
       )}
 
-      {(slice.description || canExplore) && <Menu.Divider />}
+      {(slice.description || (canExplore && !isEmbedded)) && <Menu.Divider />}
 
-      {supersetCanShare && (
+      {supersetCanShare && !isEmbedded && (
         <ShareMenuItems
           dashboardId={dashboardId}
           dashboardComponentId={componentId}
@@ -527,28 +532,30 @@ const SliceHeaderControls = (
           }}
         />
       )}
-      <NoAnimationDropdown
-        dropdownRender={() => menu}
-        overlayStyle={dropdownOverlayStyle}
-        trigger={['click']}
-        placement="bottomRight"
-        autoFocus
-        forceRender
-      >
-        <span
-          css={() => css`
-            display: flex;
-            align-items: center;
-          `}
-          id={`slice_${slice.slice_id}-controls`}
-          role="button"
-          aria-label="More Options"
-          aria-haspopup="true"
-          tabIndex={0}
+      {!isEmbedded && (
+        <NoAnimationDropdown
+          dropdownRender={() => menu}
+          overlayStyle={dropdownOverlayStyle}
+          trigger={['click']}
+          placement="bottomRight"
+          autoFocus
+          forceRender
         >
-          <VerticalDotsTrigger />
-        </span>
-      </NoAnimationDropdown>
+          <span
+            css={() => css`
+              display: flex;
+              align-items: center;
+            `}
+            id={`slice_${slice.slice_id}-controls`}
+            role="button"
+            aria-label="More Options"
+            aria-haspopup="true"
+            tabIndex={0}
+          >
+            <VerticalDotsTrigger />
+          </span>
+        </NoAnimationDropdown>
+      )}
       <DrillDetailModal
         formData={props.formData}
         initialFilters={[]}
