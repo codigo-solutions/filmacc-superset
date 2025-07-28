@@ -172,6 +172,10 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
     const dashboardPageId = useContext(DashboardPageIdContext);
     const [headerTooltip, setHeaderTooltip] = useState<ReactNode | null>(null);
     const headerRef = useRef<HTMLDivElement>(null);
+    
+    // Detect embedded mode
+    const dashboardInfo = useSelector((state: RootState) => state.dashboardInfo);
+    const isEmbeddedMode = !dashboardInfo?.userId;
     // TODO: change to indicator field after it will be implemented
     const crossFilterValue = useSelector<RootState, any>(
       state => state.dataMask[slice?.slice_id]?.filterState?.value,
@@ -180,7 +184,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
       ({ dashboardInfo }) => dashboardInfo.crossFiltersEnabled,
     );
 
-    const canExplore = !editMode && supersetCanExplore;
+    const canExplore = !editMode && supersetCanExplore && !isEmbeddedMode;
 
     useEffect(() => {
       const headerElement = headerRef.current;
@@ -281,8 +285,8 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                   exportFullCSV={exportFullCSV}
                   exportXLSX={exportXLSX}
                   exportFullXLSX={exportFullXLSX}
-                  supersetCanExplore={supersetCanExplore}
-                  supersetCanShare={supersetCanShare}
+                  supersetCanExplore={supersetCanExplore && !isEmbeddedMode}
+                  supersetCanShare={supersetCanShare && !isEmbeddedMode}
                   supersetCanCSV={supersetCanCSV}
                   componentId={componentId}
                   dashboardId={dashboardId}
