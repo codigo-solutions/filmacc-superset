@@ -297,7 +297,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                 </Tooltip>
               )}
 
-              {!uiConfig.hideChartControls && (
+              {!uiConfig.hideChartControls && !isEmbedded() && (
                 <FiltersBadge chartId={slice.slice_id} />
               )}
 
@@ -316,7 +316,7 @@ const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
                   }
                 />
               )}
-              {!uiConfig.hideChartControls && (
+              {!uiConfig.hideChartControls && !isEmbedded() && (
                 <SliceHeaderControls
                   slice={slice}
                   isCached={isCached}
