@@ -437,6 +437,7 @@ const SliceHeaderControls = (
                 canDownload={!!props.supersetCanCSV}
               />
             }
+            isEmbedded={isEmbedded}
           />
         </Menu.Item>
       )}
@@ -562,6 +563,7 @@ const SliceHeaderControls = (
         }}
         chartId={slice.slice_id}
         showModal={drillModalIsOpen}
+        isEmbedded={isEmbedded}
       />
 
       {canEditCrossFilters && scopingModal}

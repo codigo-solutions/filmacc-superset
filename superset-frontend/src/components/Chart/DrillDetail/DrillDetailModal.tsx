@@ -39,30 +39,34 @@ interface ModalFooterProps {
   canExplore: boolean;
   closeModal?: () => void;
   exploreChart: () => void;
+  isEmbedded?: boolean;
 }
 
 const ModalFooter = ({
   canExplore,
   closeModal,
   exploreChart,
+  isEmbedded = false,
 }: ModalFooterProps) => {
   const theme = useTheme();
 
   return (
     <>
-      <Button
-        buttonStyle="secondary"
-        buttonSize="small"
-        onClick={exploreChart}
-        disabled={!canExplore}
-        tooltip={
-          !canExplore
-            ? t('You do not have sufficient permissions to edit the chart')
-            : undefined
-        }
-      >
-        {t('Edit chart')}
-      </Button>
+      {!isEmbedded && (
+        <Button
+          buttonStyle="secondary"
+          buttonSize="small"
+          onClick={exploreChart}
+          disabled={!canExplore}
+          tooltip={
+            !canExplore
+              ? t('You do not have sufficient permissions to edit the chart')
+              : undefined
+          }
+        >
+          {t('Edit chart')}
+        </Button>
+      )}
       <Button
         buttonStyle="primary"
         buttonSize="small"
@@ -84,6 +88,7 @@ interface DrillDetailModalProps {
   initialFilters: BinaryQueryObjectFilterClause[];
   showModal: boolean;
   onHideModal: () => void;
+  isEmbedded?: boolean;
 }
 
 export default function DrillDetailModal({
@@ -92,6 +97,7 @@ export default function DrillDetailModal({
   initialFilters,
   showModal,
   onHideModal,
+  isEmbedded = false,
 }: DrillDetailModalProps) {
   const theme = useTheme();
   const history = useHistory();
@@ -125,7 +131,11 @@ export default function DrillDetailModal({
       `}
       title={t('Drill to detail: %s', chartName)}
       footer={
-        <ModalFooter exploreChart={exploreChart} canExplore={canExplore} />
+        <ModalFooter 
+          exploreChart={exploreChart} 
+          canExplore={canExplore} 
+          isEmbedded={isEmbedded}
+        />
       }
       responsive
       resizable

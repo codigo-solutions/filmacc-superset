@@ -29,6 +29,7 @@ export const ViewResultsModalTrigger = ({
   modalTitle,
   modalBody,
   modalRef,
+  isEmbedded = false,
 }: {
   canExplore?: boolean;
   exploreUrl: string;
@@ -36,6 +37,7 @@ export const ViewResultsModalTrigger = ({
   modalTitle: string;
   modalBody: ReactChild;
   modalRef?: RefObject<any>;
+  isEmbedded?: boolean;
 }) => {
   const history = useHistory();
   const exploreChart = () => history.push(exploreUrl);
@@ -63,19 +65,21 @@ export const ViewResultsModalTrigger = ({
       destroyOnClose
       modalFooter={
         <>
-          <Button
-            buttonStyle="secondary"
-            buttonSize="small"
-            onClick={exploreChart}
-            disabled={!canExplore}
-            tooltip={
-              !canExplore
-                ? t('You do not have sufficient permissions to edit the chart')
-                : undefined
-            }
-          >
-            {t('Edit chart')}
-          </Button>
+          {!isEmbedded && (
+            <Button
+              buttonStyle="secondary"
+              buttonSize="small"
+              onClick={exploreChart}
+              disabled={!canExplore}
+              tooltip={
+                !canExplore
+                  ? t('You do not have sufficient permissions to edit the chart')
+                  : undefined
+              }
+            >
+              {t('Edit chart')}
+            </Button>
+          )}
           <Button
             buttonStyle="primary"
             buttonSize="small"
