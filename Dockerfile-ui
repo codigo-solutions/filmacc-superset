@@ -9,5 +9,8 @@ RUN ls -ltra /app/superset/
 COPY --chown=superset:superset superset/static /app/superset/static
 RUN ls -ltra /app/superset/static
 
+# Copy the patched Excel export helper
+COPY --chown=superset:superset superset/utils/excel.py /app/superset/utils/excel.py
+
 # Switch back to superset user
 USER superset
