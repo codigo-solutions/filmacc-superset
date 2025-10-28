@@ -1,0 +1,13 @@
+FROM apachesuperset.docker.scarf.sh/apache/superset:5.0.0-dev
+
+# Switch to root to copy files
+USER root
+
+# Copy the built static assets
+RUN rm -rf /app/superset/static
+RUN ls -ltra /app/superset/
+COPY --chown=superset:superset superset/static /app/superset/static
+RUN ls -ltra /app/superset/static
+
+# Switch back to superset user
+USER superset
